@@ -30,18 +30,15 @@ export default {
   },
 
   Mutation: {
-    signUp: async (
-      parent,
-      { username, email, password },
-      { models, secret }
-    ) => {
+    signUp: async (parent, { username, email, password }, { models }) => {
+      console.log(models);
       const user = await models.User.create({
         username,
         email,
         password
       });
 
-      return { token: createToken(user, secret, "30m") };
+      return { token: createToken(user, "hazem", "30m") };
     },
 
     signIn: async (parent, { login, password }, { models, secret }) => {

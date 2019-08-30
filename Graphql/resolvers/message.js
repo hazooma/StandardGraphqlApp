@@ -10,20 +10,11 @@ const fromCursorHash = string =>
 export default {
   Query: {
     messages: async (parent, { cursor, limit = 100 }, { models }) => {
-      const cursorOptions = cursor
-        ? {
-            where: {
-              createdAt: {
-                [Sequelize.Op.lt]: fromCursorHash(cursor)
-              }
-            }
-          }
-        : {};
       const messages = await models.Message.findAll({
-        order: [["createdAt", "DESC"]],
-        limit: limit + 1,
-        ...cursorOptions
-      });
+        createdAt: { $lt: fromCursorHash(cursor) }
+      })
+        .limit(limit + 1)
+        .sort({ createdAt: -1 });
       const hasNextPage = messages.length > limit;
       const edges = hasNextPage ? messages.slice(0, -1) : messages;
       return {
