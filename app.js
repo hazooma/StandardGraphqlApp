@@ -4,7 +4,7 @@ import { config } from "dotenv";
 config();
 
 import typeDefs from "./Graphql/schema";
-import context from "./Graphql/context";
+import { getMe } from "./Graphql/context";
 import resolvers from "./Graphql/resolvers";
 import models, { connectDb } from "./DB";
 
@@ -14,7 +14,9 @@ connectDb()
     const server = new ApolloServer({
       typeDefs,
       resolvers,
-      context: { models }
+      context: ({ req }) => {
+        return { me: getMe(req), models };
+      }
     });
 
     const app = express();

@@ -30,31 +30,30 @@ export default {
   },
 
   Mutation: {
-    signUp: async (parent, { username, email, password }, { models }) => {
-      console.log(models);
+    signUp: async (parent, { username, email, password }, { models, me }) => {
       const user = await models.User.create({
         username,
         email,
         password
       });
 
-      return { token: createToken(user, "hazem", "30m") };
+      return { token: createToken(user, "123456", "30m") };
     },
 
-    signIn: async (parent, { login, password }, { models, secret }) => {
-      const user = await models.User.findByLogin(login);
+    signIn: async (parent, { email, password }, { models, secret }) => {
+      const user = await models.User.findOne({ email });
 
       if (!user) {
         throw new UserInputError("No user found with this login credentials.");
       }
 
-      const isValid = await user.validatePassword(password);
+      // const isValid = await user.validatePassword(password);
 
-      if (!isValid) {
-        throw new AuthenticationError("Invalid password.");
-      }
+      // if (!isValid) {
+      //   throw new AuthenticationError("Invalid password.");
+      // }
 
-      return { token: createToken(user, secret, "30m") };
+      return { token: createToken(user, "123456", "30m") };
     },
 
     updateUser: combineResolvers(
